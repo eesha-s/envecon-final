@@ -144,7 +144,9 @@ plt.title('World C02 Emissions Per Year (1751-2022)')
 plt.legend()
 plt.grid(True)
 plt.savefig('world_co2_plot.png',dpi=300) #this is for the picture summary at the very end
-plt.show()
+st.pyplot(plt.gcf())  # pass the current figure object to Streamlit
+
+plt.clf()
 
 co2_top_ten=final[final['Indicator']=='Emissions'] #we only want emissions data
 co2_top_ten['Value']=pd.to_numeric(co2_top_ten['Value'],errors='coerce') #we need to make the values floats to actually plot them
@@ -192,7 +194,7 @@ tile_pic=ggplot(tile_data,aes(x='Year',y='Country',fill='LogValue'))+ geom_tile(
 
 #similar to the case study but i just picked my own gradient and made sure to change the legend position for clarity
 
-display(tile_pic)
+st.pyplot(ggplot.draw(tile_pic)) 
 tile_pic.save("tile_plot.png",dpi=300)
 
 facet_data=final[final['Indicator'].isin(['Emissions','GDP','Energy Use'])]
@@ -214,7 +216,7 @@ scatter_data #we are now setting the years and the country just to prt for the s
 
 #!pip install -q scikit-misc #this is so that we can use lowess like used in R!
 co2_temp_facet=ggplot(scatter_data, aes(x = 'Year', y = 'Value')) + geom_point() + geom_smooth(method = "loess", se = False)+facet_wrap('~Label', scales='free_y', ncol=1)+labs(title='Portugal Emissions and Temperatures (1980-2022)')
-display(co2_temp_facet)
+st.pyplot(ggplot.draw(co2_temp_facet))
 co2_temp_facet.save("co2_temp_facet.png",dpi=300)
 
 facet_wide=scatter_data.pivot_table(index=['Year','Region'],columns='Indicator',values='Value',aggfunc='mean').reset_index()
@@ -238,7 +240,7 @@ from sklearn.preprocessing import StandardScaler #simplest way of scaling the da
 scaler=StandardScaler()
 facet_wide[['Emissions','Temperature']]=scaler.fit_transform(facet_wide[['Emissions','Temperature']])
 scaled_emissions_temp=ggplot(facet_wide,aes(x='Emissions',y='Temperature'))+geom_point()+geom_smooth(method='lm',se=False)+theme_linedraw()+labs(title='Portugal Emissions and Temperature (1980-2022)',subtitle='Scaled Version')
-display(scaled_emissions_temp)
+st.pyplot(ggplot.draw(scaled_emissions_temp))
 scaled_emissions_temp.save("scaled_emissions_temp.png",dpi=300)
 
 #!pip install pillow #this was just so that the pngs would populate nicely
