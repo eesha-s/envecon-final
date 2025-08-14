@@ -207,7 +207,7 @@ facet_data['Value']=pd.to_numeric(facet_data['Value'],errors='coerce')
 facet_data=facet_data.dropna(subset=['Value'])
 facet_data
 
-ggplot(facet_data, aes(x = 'Year', y = 'Value', group = 'Country')) + geom_line() + facet_grid('Indicator ~ Region', scales = "free_y")+labs(title = "Distribution of Indicators by Year and Value", y = "Indicator Value")
+#ggplot(facet_data, aes(x = 'Year', y = 'Value', group = 'Country')) + geom_line() + facet_grid('Indicator ~ Region', scales = "free_y")+labs(title = "Distribution of Indicators by Year and Value", y = "Indicator Value")
 
 scatter_data=final[final['Indicator'].isin(['Emissions','Temperature'])]
 scatter_data=scatter_data[scatter_data['Region']=='Portugal']
