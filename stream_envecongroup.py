@@ -219,7 +219,7 @@ scatter_data=scatter_data.dropna(subset=['Value'])
 scatter_data #we are now setting the years and the country just to prt for the scatter plot data
 
 #!pip install -q scikit-misc #this is so that we can use lowess like used in R!
-co2_temp_facet=ggplot(scatter_data, aes(x = 'Year', y = 'Value')) + geom_point() + geom_smooth(method = "loess", se = False)+facet_wrap('~Label', scales='free_y', ncol=1)+labs(title='Portugal Emissions and Temperatures (1980-2022)')
+co2_temp_facet=ggplot(scatter_data, aes(x = 'Year', y = 'Value')) + geom_point() + geom_smooth(method = "loess", se = False)+facet_wrap('~Label', scales='free_y', ncol=1)+theme(figure_size=(8, 10))+labs(title='Portugal Emissions and Temperatures (1980-2022)')
 streamlit.pyplot(ggplot.draw(co2_temp_facet))
 co2_temp_facet.save("co2_temp_facet.png",dpi=300)
 
