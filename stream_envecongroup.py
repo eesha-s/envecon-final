@@ -247,8 +247,7 @@ scaled_emissions_temp=ggplot(facet_wide,aes(x='Emissions',y='Temperature'))+geom
 streamlit.pyplot(ggplot.draw(scaled_emissions_temp))
 scaled_emissions_temp.save("scaled_emissions_temp.png",dpi=300)
 
-#!pip install pillow #this was just so that the pngs would populate nicely
-
+#!pip install pillow #this was just so that the pngs would populate nicely :)
 from PIL import Image
 img1=Image.open('/content/world_co2_plot.png')
 img2=Image.open('/content/tile_plot.png')
