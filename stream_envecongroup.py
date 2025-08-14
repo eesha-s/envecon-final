@@ -12,7 +12,7 @@ Original file is located at
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
+import streamlit
 #!pip install openpyxl
 
 co2=pd.read_csv('https://raw.githubusercontent.com/eesha-s/envecon_group/refs/heads/main/co2_group.csv')
@@ -121,6 +121,7 @@ final
 
 #we first need to recreate the original co2 emissions plot
 co2_plot_data = final[final['Indicator'] == 'Emissions'].copy()
+co2_plot_data['Year'] = pd.to_numeric(co2_plot_data['Year'], errors='coerce')
 co2_plot_data['Value'] = pd.to_numeric(co2_plot_data['Value'], errors='coerce')
 co2_plot_data = co2_plot_data.dropna(subset=['Value'])
 co2_plot_data = co2_plot_data.groupby('Year')['Value'].sum().reset_index()
@@ -130,6 +131,7 @@ co2_plot_data = co2_plot_data.groupby('Year')['Value'].sum().reset_index()
 #now just for the portugal data!
 co2_plot_PRT = final[final['Indicator'] == 'Emissions'].copy()
 co2_plot_PRT=co2_plot_PRT[co2_plot_PRT['Region']=='Portugal']
+co2_plot_PRT['Year'] = pd.to_numeric(co2_plot_PRT['Year'], errors='coerce')
 co2_plot_PRT['Value'] = pd.to_numeric(co2_plot_PRT['Value'], errors='coerce')
 co2_plot_PRT = co2_plot_PRT.dropna(subset=['Value'])
 co2_plot_PRT = co2_plot_PRT.groupby('Year')['Value'].sum().reset_index()
@@ -149,6 +151,7 @@ streamlit.pyplot(plt.gcf())  # pass the current figure object to Streamlit
 plt.clf()
 
 co2_top_ten=final[final['Indicator']=='Emissions'] #we only want emissions data
+co2_top_ten['Year']=pd.to_numeric(co2_top_ten['Year'],errors='coerce')
 co2_top_ten['Value']=pd.to_numeric(co2_top_ten['Value'],errors='coerce') #we need to make the values floats to actually plot them
 co2_top_ten=co2_top_ten.dropna(subset=['Value'])
 co2_top_ten=co2_top_ten.groupby('Country')['Value'].sum().reset_index() #sum the data for each country
@@ -156,6 +159,7 @@ co2_top_ten=co2_top_ten.sort_values(by='Value',ascending=False).head(10) #sorted
 co2_top_ten
 co2_top_plot=final[final['Country'].isin(co2_top_ten['Country'])] #now i just take the data that has the top ten country names
 co2_top_plot=co2_top_plot[co2_top_plot['Indicator']=='Emissions']
+co2_top_plot['Year']=pd.to_numeric(co2_top_plot['Year'],errors='coerce')
 co2_top_plot['Value']=pd.to_numeric(co2_top_plot['Value'],errors='coerce')
 co2_top_plot=co2_top_plot.dropna(subset=['Value'])
 co2_top_plot
