@@ -192,12 +192,13 @@ tile_data
 
 import plotnine #plotnine is how we can work with ggplot in python!
 from plotnine import *
+'''one'''
 tile_pic=ggplot(tile_data,aes(x='Year',y='Country',fill='LogValue'))+ geom_tile()+ scale_fill_gradient("pink", "purple")+labs(title = "Top 10 CO2 Emission-producing Countries",
        subtitle = "Ordered by Emissions Produced in 2022",
        fill = "Ln(CO2 Emissions (Metric Tonnes))")+theme(legend_position='bottom')
 
 #similar to the case study but i just picked my own gradient and made sure to change the legend position for clarity
-'''one'''
+
 streamlit.pyplot(ggplot.draw(tile_pic)) 
 '''two'''
 tile_pic.save("tile_plot.png",dpi=300)
