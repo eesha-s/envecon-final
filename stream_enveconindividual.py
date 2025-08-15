@@ -123,12 +123,14 @@ files.download("final_dataset.csv")
 
 #we first need to recreate the original co2 emissions plot
 co2_plot_data = final[final['Indicator'] == 'Emissions'].copy()
+co2_plot_data['Year'] = pd.to_numeric(co2_plot_data['Year'], errors='coerce')
 co2_plot_data['Value'] = pd.to_numeric(co2_plot_data['Value'], errors='coerce')
 co2_plot_data = co2_plot_data.dropna(subset=['Value'])
 co2_plot_data = co2_plot_data.groupby('Year')['Value'].sum().reset_index()
 #now just for the US data!
 co2_plot_US = final[final['Indicator'] == 'Emissions'].copy()
 co2_plot_US=co2_plot_US[co2_plot_US['Region']=='United States']
+co2_plot_US['Year'] = pd.to_numeric(co2_plot_US['Year'], errors='coerce')
 co2_plot_US['Value'] = pd.to_numeric(co2_plot_US['Value'], errors='coerce')
 co2_plot_US = co2_plot_US.dropna(subset=['Value'])
 co2_plot_US = co2_plot_US.groupby('Year')['Value'].sum().reset_index()
@@ -143,9 +145,12 @@ plt.title('World C02 Emissions Per Year (1751-2022)')
 plt.legend()
 plt.grid(True)
 plt.savefig('world_co2_plot.png',dpi=300) #this is for the picture summary at the very end
-plt.show()
+streamlit.pyplot(plt.gcf())  # pass the current figure object to Streamlit
+
+plt.clf()
 
 co2_top_ten=final[final['Indicator']=='Emissions'] #we only want emissions data
+co2_top_ten['Year']=pd.to_numeric(co2_top_ten['Year'],errors='coerce')
 co2_top_ten['Value']=pd.to_numeric(co2_top_ten['Value'],errors='coerce') #we need to make the values floats to actually plot them
 co2_top_ten=co2_top_ten.dropna(subset=['Value'])
 co2_top_ten=co2_top_ten.groupby('Country')['Value'].sum().reset_index() #sum the data for each country
@@ -153,6 +158,9 @@ co2_top_ten=co2_top_ten.sort_values(by='Value',ascending=False).head(10) #sorted
 co2_top_ten
 co2_top_plot=final[final['Country'].isin(co2_top_ten['Country'])] #now i just take the data that has the top ten country names
 co2_top_plot=co2_top_plot[co2_top_plot['Indicator']=='Emissions']
+co2_top_plot['Year']=pd.to_numeric(co2_top_plot['Year'],errors='coerce')
+co2_top_plot['Value']=pd.to_numeric(co2_top_plot['Value'],errors='coerce')
+co2_top_plot=co2_top_plot.dropna(subset=['Value'])
 co2_top_plot
 
 top_countries=co2_top_ten['Country'].tolist() #we want the names of the top ten countries
@@ -172,6 +180,7 @@ plt.ylabel('CO2 Emissions(Metric Tons)')
 plt.title('World C02 Emissions Per Year (1900-2022)')
 
 tile_data=co2_top_plot[co2_top_plot['Year']>=1900]
+tile_data['Year']=pd.to_numeric(tile_data['Year'],errors='coerce')
 tile_data['Value']=pd.to_numeric(tile_data['Value'],errors='coerce')
 tile_data=tile_data.dropna(subset=['Value'])
 tile_data['LogValue']=np.log(tile_data['Value']) #for tile plots we want the data to be in log form
@@ -188,30 +197,35 @@ tile_pic=ggplot(tile_data,aes(x='Year',y='Country',fill='LogValue'))+ geom_tile(
 
 #similar to the case study but i just picked my own gradient and made sure to change the legend position for clarity
 
-display(tile_pic)
+streamlit.pyplot(ggplot.draw(tile_pic)) 
+
 tile_pic.save("tile_plot.png",dpi=300)
 
 facet_data=final[final['Indicator'].isin(['Emissions','GDP','Energy Use'])]
+facet_data['Year']=pd.to_numeric(facet_data['Year'],errors='coerce')
 facet_data['Value']=pd.to_numeric(facet_data['Value'],errors='coerce')
 facet_data=facet_data.dropna(subset=['Value'])
 facet_data
 
-ggplot(facet_data, aes(x = 'Year', y = 'Value', group = 'Country')) + geom_line() + facet_grid('Indicator ~ Region', scales = "free_y")+labs(title = "Distribution of Indicators by Year and Value", y = "Indicator Value")
+#ggplot(facet_data, aes(x = 'Year', y = 'Value', group = 'Country')) + geom_line() + facet_grid('Indicator ~ Region', scales = "free_y")+labs(title = "Distribution of Indicators by Year and Value", y = "Indicator Value")
 
-''' recreated the above but gdp goes off the grid even when i played with the scale'''
+
 
 scatter_data=final[final['Indicator'].isin(['Emissions','Temperature'])]
 scatter_data=scatter_data[scatter_data['Region']=='United States']
 scatter_data=scatter_data[scatter_data['Year']<=2022]
 scatter_data=scatter_data[scatter_data['Year']>=1980]
+scatter_data['Year']=pd.to_numeric(scatter_data['Year'],errors='coerce')
 scatter_data['Value']=pd.to_numeric(scatter_data['Value'],errors='coerce')
 scatter_data=scatter_data.dropna(subset=['Value'])
 scatter_data #we are now setting the years and the country just to us for the scatter plot data
 
-!pip install -q scikit-misc #this is so that we can use lowess like used in R!
+#!pip install -q scikit-misc #this is so that we can use lowess like used in R!
 co2_temp_facet=ggplot(scatter_data, aes(x = 'Year', y = 'Value')) + geom_point() + geom_smooth(method = "loess", se = False)+facet_wrap('~Label', scales='free_y', ncol=1)+labs(title='US Emissions and Temperatures (1980-2022)')
-display(co2_temp_facet)
-co2_temp_facet.save("co2_temp_facet.png",dpi=300)
+fig = ggplot.draw(co2_temp_facet)
+streamlit.pyplot(fig)
+fig.savefig("co2_temp_facet.png", dpi=300)
+plt.close(fig)
 
 facet_wide=scatter_data.pivot_table(index=['Year','Region'],columns='Indicator',values='Value',aggfunc='mean').reset_index()
 facet_wide['Temperature'].dtype
@@ -237,29 +251,9 @@ scaled_emissions_temp=ggplot(facet_wide,aes(x='Emissions',y='Temperature'))+geom
 display(scaled_emissions_temp)
 scaled_emissions_temp.save("scaled_emissions_temp.png",dpi=300)
 
-!pip install pillow #this was just so that the pngs would populate nicely
+#!pip install pillow #this was just so that the pngs would populate nicely
 
-from PIL import Image
-img1=Image.open('/content/world_co2_plot.png')
-img2=Image.open('/content/tile_plot.png')
-img3=Image.open('/content/co2_temp_facet.png')
-img4=Image.open('/content/scaled_emissions_temp.png')
-fig,axs= plt.subplots(2,2,figsize=(10,10))
-axs[0,0].imshow(img1)
-axs[0,0].axis('off')
-axs[0,0].set_title('World CO2 Emissions')
 
-axs[0,1].imshow(img2)
-axs[0,1].axis('off')
-axs[0,1].set_title('Top 10 CO2 Emission-producing Countries')
-
-axs[1,0].imshow(img3)
-axs[1,0].axis('off')
-axs[1,0].set_title('US Emissions and Temperatures')
-
-axs[1,1].imshow(img4)
-axs[1,1].axis('off')
-axs[1,1].set_title('Scaled US Emissions and Temperatures')
 
 """# **the main questions**
 1. global co2 emissions have increased over time. the us has increased significantly, but it's still not the highest compared to other countries
