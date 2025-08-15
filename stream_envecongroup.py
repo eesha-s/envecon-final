@@ -254,24 +254,4 @@ streamlit.pyplot(ggplot.draw(scaled_emissions_temp))
 scaled_emissions_temp.save("scaled_emissions_temp.png",dpi=300)
 
 #!pip install pillow #this was just so that the pngs would populate nicely :)
-from PIL import Image
-img1=Image.open('/content/world_co2_plot.png')
-img2=Image.open('/content/tile_plot.png')
-img3=Image.open('/content/co2_temp_facet.png')
-img4=Image.open('/content/scaled_emissions_temp.png')
-fig,axs= plt.subplots(2,2,figsize=(10,10))
-axs[0,0].imshow(img1)
-axs[0,0].axis('off')
-axs[0,0].set_title('World CO2 Emissions')
 
-axs[0,1].imshow(img2)
-axs[0,1].axis('off')
-axs[0,1].set_title('Top 10 CO2 Emission-producing Countries')
-
-axs[1,0].imshow(img3)
-axs[1,0].axis('off')
-axs[1,0].set_title('Portugal Emissions and Temperatures')
-
-axs[1,1].imshow(img4)
-axs[1,1].axis('off')
-axs[1,1].set_title('Scaled Portugal Emissions and Temperatures')
