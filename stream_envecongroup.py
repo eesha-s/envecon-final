@@ -192,7 +192,7 @@ tile_data
 
 import plotnine #plotnine is how we can work with ggplot in python!
 from plotnine import *
-'''one'''
+
 tile_pic=ggplot(tile_data,aes(x='Year',y='Country',fill='LogValue'))+ geom_tile()+ scale_fill_gradient("pink", "purple")+labs(title = "Top 10 CO2 Emission-producing Countries",
        subtitle = "Ordered by Emissions Produced in 2022",
        fill = "Ln(CO2 Emissions (Metric Tonnes))")+theme(legend_position='bottom')
@@ -200,9 +200,9 @@ tile_pic=ggplot(tile_data,aes(x='Year',y='Country',fill='LogValue'))+ geom_tile(
 #similar to the case study but i just picked my own gradient and made sure to change the legend position for clarity
 
 streamlit.pyplot(ggplot.draw(tile_pic)) 
-'''two'''
+
 tile_pic.save("tile_plot.png",dpi=300)
-'''three'''
+
 facet_data=final[final['Indicator'].isin(['Emissions','GDP','Energy Use'])]
 facet_data['Year']=pd.to_numeric(facet_data['Year'],errors='coerce')
 facet_data['Value']=pd.to_numeric(facet_data['Value'],errors='coerce')
@@ -222,9 +222,11 @@ scatter_data #we are now setting the years and the country just to prt for the s
 
 #!pip install -q scikit-misc #this is so that we can use lowess like used in R!
 co2_temp_facet=ggplot(scatter_data, aes(x = 'Year', y = 'Value')) + geom_point() + geom_smooth(method = "loess", se = False)+facet_wrap('~Label', scales='free_y', ncol=1)+theme(figure_size=(8, 10))+labs(title='Portugal Emissions and Temperatures (1980-2022)')
+'''one'''
 streamlit.pyplot(ggplot.draw(co2_temp_facet))
+'''two'''
 co2_temp_facet.save("co2_temp_facet.png",dpi=300)
-
+'''three'''
 facet_wide=scatter_data.pivot_table(index=['Year','Region'],columns='Indicator',values='Value',aggfunc='mean').reset_index()
 facet_wide['Temperature'].dtype
 #facet_wide
