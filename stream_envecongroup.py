@@ -224,7 +224,7 @@ scatter_data #we are now setting the years and the country just to prt for the s
 co2_temp_facet=ggplot(scatter_data, aes(x = 'Year', y = 'Value')) + geom_point() + geom_smooth(method = "loess", se = False)+facet_wrap('~Label', scales='free_y', ncol=1)+theme(figure_size=(8, 10))+labs(title='Portugal Emissions and Temperatures (1980-2022)')
 '''one'''
 fig = ggplot.draw(co2_temp_facet)
-st.pyplot(fig)
+streamlit.pyplot(fig)
 fig.savefig("co2_temp_facet.png", dpi=300)
 plt.close(fig)
 
