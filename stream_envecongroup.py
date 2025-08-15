@@ -197,10 +197,11 @@ tile_pic=ggplot(tile_data,aes(x='Year',y='Country',fill='LogValue'))+ geom_tile(
        fill = "Ln(CO2 Emissions (Metric Tonnes))")+theme(legend_position='bottom')
 
 #similar to the case study but i just picked my own gradient and made sure to change the legend position for clarity
-
+print("one")
 streamlit.pyplot(ggplot.draw(tile_pic)) 
+print("two")
 tile_pic.save("tile_plot.png",dpi=300)
-
+print("three")
 facet_data=final[final['Indicator'].isin(['Emissions','GDP','Energy Use'])]
 facet_data['Year']=pd.to_numeric(facet_data['Year'],errors='coerce')
 facet_data['Value']=pd.to_numeric(facet_data['Value'],errors='coerce')
