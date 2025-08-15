@@ -247,7 +247,7 @@ from sklearn.preprocessing import StandardScaler #simplest way of scaling the da
 scaler=StandardScaler()
 facet_wide[['Emissions','Temperature']]=scaler.fit_transform(facet_wide[['Emissions','Temperature']])
 scaled_emissions_temp=ggplot(facet_wide,aes(x='Emissions',y='Temperature'))+geom_point()+geom_smooth(method='lm',se=False)+theme_linedraw()+labs(title='US Emissions and Temperature (1980-2022)',subtitle='Scaled Version')
-display(scaled_emissions_temp)
+streamlit.pyplot(ggplot.draw(scaled_emissions_temp))
 scaled_emissions_temp.save("scaled_emissions_temp.png",dpi=300)
 
 #!pip install pillow #this was just so that the pngs would populate nicely
